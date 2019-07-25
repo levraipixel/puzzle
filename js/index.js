@@ -7,12 +7,9 @@ class Piece {
     this.b_blocks = b_blocks;
   }
 
-  render(isAbove, isRotated) {
+  render(isRotated) {
     var $piece = $('<div>');
     $piece.addClass('piece');
-    if (isAbove) {
-      $piece.addClass('above');
-    }
     if (isRotated) {
       $piece.addClass('rotated');
     }
@@ -52,6 +49,55 @@ class Piece {
   }
 }
 
+class PiecePlacement {
+  constructor(piece, index, isAbove, isRotated) {
+    this.piece = piece;
+    this.index = index;
+    this.isAbove = isAbove;
+    this.isRotated = isRotated;
+  }
+
+  render() {
+    return this.piece.render(this.isRotated);
+  }
+}
+
+class Solution {
+  constructor(piecePlacements) {
+    console.log('[Solution] constructor', piecePlacements);
+    this.piecePlacements = piecePlacements;
+  }
+
+  render() {
+    var $solution = $('<div>');
+    $solution.addClass('solution');
+
+    var $pieces = [
+      [null, null, null, null],
+      [null, null, null, null]
+    ];
+    this.piecePlacements.forEach(function (piecePlacement) {
+      $pieces[0+piecePlacement.isAbove][piecePlacement.index] = piecePlacement.render();
+    });
+
+    var $below = $('<div>');
+    $below.addClass('below');
+    $pieces[0].forEach(function ($piece) {
+      $below.append($piece);
+    });
+    $solution.append($below);
+
+    var $above = $('<div>');
+    $above.addClass('above');
+    $pieces[1].forEach(function ($piece) {
+      $above.append($piece);
+    });
+    $solution.append($above);
+
+    return $solution;
+  }
+}
+
 var pieces = [
   new Piece([0, 0, 0, 0, 1], [1, 0, 0, 0, 1]),
   new Piece([1, 0, 0, 0, 0], [0, 1, 0, 1, 0]),
@@ -64,12 +110,19 @@ var pieces = [
 ];
 console.log('pieces:', pieces);
 
-var $pieces = $('<div>');
-$pieces.attr('id', 'pieces');
-pieces.forEach(function (piece) {
-  $pieces.append(piece.render(false, false));
-  $pieces.append(piece.render(false, true));
-  $pieces.append(piece.render(true, false));
-  $pieces.append(piece.render(true, true));
-});
-$('body').append($pieces);
+var piecePlacements = [
+  new PiecePlacement(pieces[0], 0, false, false),
+  new PiecePlacement(pieces[1], 1, false, false),
+  new PiecePlacement(pieces[2], 2, false, false),
+  new PiecePlacement(pieces[3], 3, false, false),
+  new PiecePlacement(pieces[4], 0, true, false),
+  new PiecePlacement(pieces[5], 1, true, false),
+  new PiecePlacement(pieces[6], 2, true, false),
+  new PiecePlacement(pieces[7], 3, true, false)
+];
+console.log('piecePlacements:', piecePlacements);
+
+var solution = new Solution(piecePlacements);
+console.log('solution:', solution);
+
+$('body').append(solution.render());

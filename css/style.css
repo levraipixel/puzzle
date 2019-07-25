@@ -1,41 +1,80 @@
-#pieces {
-
-}
-#pieces .piece {
+.piece {
   display: inline-block;
   position: relative;
-  margin: 20px;
 }
-#pieces .piece.above {
-  transform: rotate(90deg);
-  margin: 20px 60px;
-}
-#pieces .piece .stick {
+.piece .stick {
   position: absolute;
+  opacity: 0.6;
+}
+.piece .row .block {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+.piece .row .block.solid {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.solution {
+  position: relative;
+}
+
+/* BELOW */
+
+.solution .below {
+
+}
+.solution .below .piece + .piece {
+  margin-left: -20px;
+}
+.solution .below .piece .stick {
   top: 0;
   left: 20px;
   width: 10px;
   height: 100%;
   background-color: blue;
-  opacity: 0.6;
 }
-#pieces .piece.above .stick {
-  background-color: red;
-}
-#pieces .piece .row {
+.solution .below .piece .row {
   height: 20px;
 }
-#pieces .piece .row + .row {
+.solution .below .piece .row + .row {
   margin-top: 10px;
 }
-#pieces .piece .row .block {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-}
-#pieces .piece .row .block + .block {
+.solution .below .piece .row .block + .block {
   margin-left: 10px;
 }
-#pieces .piece .row .block.solid {
-  background: rgba(0, 0, 0, 0.4);
+
+
+/* ABOVE */
+
+.solution .above {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.solution .above .piece {
+  display: block;
+  height: 50px;
+}
+.solution .above .piece + .piece {
+  margin-top: -20px;
+}
+.solution .above .piece .stick {
+  top: 20px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background-color: red;
+}
+.solution .above .piece .row {
+  display: inline-block;
+}
+.solution .above .piece .row + .row {
+  margin-left: 10px;
+}
+.solution .above .piece .row .block {
+  display: block;
+}
+.solution .above .piece .row .block + .block {
+  margin-top: 10px;
 }
