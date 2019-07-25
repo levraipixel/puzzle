@@ -1,0 +1,41 @@
+#pieces {
+
+}
+#pieces .piece {
+  display: inline-block;
+  position: relative;
+  margin: 20px;
+}
+#pieces .piece.above {
+  transform: rotate(90deg);
+  margin: 20px 60px;
+}
+#pieces .piece .stick {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 10px;
+  height: 100%;
+  background-color: blue;
+  opacity: 0.6;
+}
+#pieces .piece.above .stick {
+  background-color: red;
+}
+#pieces .piece .row {
+  height: 20px;
+}
+#pieces .piece .row + .row {
+  margin-top: 10px;
+}
+#pieces .piece .row .block {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+#pieces .piece .row .block + .block {
+  margin-left: 10px;
+}
+#pieces .piece .row .block.solid {
+  background: rgba(0, 0, 0, 0.4);
+}
