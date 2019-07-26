@@ -1,3 +1,4 @@
+
 var pieces = [
   new Piece([0, 0, 0, 0, 1], [1, 0, 0, 0, 1]),
   new Piece([1, 0, 0, 0, 0], [0, 1, 0, 1, 0]),
@@ -10,42 +11,88 @@ var pieces = [
 ];
 // console.log('pieces:', pieces);
 
-var newPiecePlacement = function(pieceIndex, index, isAbove, isRotated) {
-  return (new PiecePlacement(pieces[pieceIndex], index, isAbove, isRotated));
-}
-var newSolution = function(piecePlacements) {
+var buildSolution = function(permutation, rotationPossibility) {
+  var piecePlacements = [];
+  permutation.forEach(function (pieceIndex, index) {
+    piecePlacements.push(
+      new PiecePlacement(pieces[pieceIndex], index % 4, index > 3, rotationPossibility[pieceIndex])
+    );
+  });
   return (new Solution(piecePlacements));
-}
+};
 
-newSolution([
-  newPiecePlacement(0, 0, false, false),
-  newPiecePlacement(1, 1, false, false),
-  newPiecePlacement(2, 2, false, false),
-  newPiecePlacement(3, 3, false, false),
-  newPiecePlacement(4, 0, true, false),
-  newPiecePlacement(5, 1, true, false),
-  newPiecePlacement(6, 2, true, false),
-  newPiecePlacement(7, 3, true, false)
-]).renderToBody();
+var buildPermutations = function() {
+  var perm = function(xs) {
+    let ret = [];
 
-newSolution([
-  newPiecePlacement(0, 0, false, false),
-  newPiecePlacement(2, 1, false, false),
-  newPiecePlacement(1, 2, false, false),
-  newPiecePlacement(3, 3, false, false),
-  newPiecePlacement(4, 0, true, false),
-  newPiecePlacement(5, 1, true, false),
-  newPiecePlacement(6, 2, true, false),
-  newPiecePlacement(7, 3, true, false)
-]).renderToBody();
+    for (let i = 0; i < xs.length; i = i + 1) {
+      let rest = perm(xs.slice(0, i).concat(xs.slice(i + 1)));
 
-newSolution([
-  newPiecePlacement(0, 0, false, false),
-  newPiecePlacement(5, 1, false, false),
-  newPiecePlacement(2, 2, false, false),
-  newPiecePlacement(3, 3, false, false),
-  newPiecePlacement(4, 0, true, false),
-  newPiecePlacement(1, 1, true, false),
-  newPiecePlacement(6, 2, true, false),
-  newPiecePlacement(7, 3, true, false)
-]).renderToBody();
+      if(!rest.length) {
+        ret.push([xs[i]])
+      } else {
+        for(let j = 0; j < rest.length; j = j + 1) {
+          ret.push([xs[i]].concat(rest[j]))
+        }
+      }
+    }
+    return ret;
+  };
+  return perm([0, 1, 2, 3, 4, 5, 6, 7]);
+};
+
+var buildRotationPossibilities = function() {
+  var rotationPossibilities = [false, true];
+
+  for(var i = 0; i < 7; i++) {
+    var oldPossibilities = rotationPossibilities;
+    var newPossibilities = [];
+    oldPossibilities.forEach(function (oldPossibility) {
+      newPossibilities.push([false].concat(oldPossibility));
+      newPossibilities.push([true].concat(oldPossibility));
+    });
+    rotationPossibilities = newPossibilities;
+  }
+
+  return rotationPossibilities;
+};
+
+
+var tryAllSolutions = function() {
+  var indexPermutations = buildPermutations();
+  var rotationPossibilities = buildRotationPossibilities();
+
+  var start = new Date();
+
+  var BreakException = {};
+  try {
+    indexPermutations.forEach(function (permutation) {
+      rotationPossibilities.forEach(function (rotationPossibility) {
+        var solution = buildSolution(permutation, rotationPossibility);
+        if (solution.isValid()) {
+          console.log('valid solution:', permutation, rotationPossibility, solution);
+          solution.renderToBody(true);
+          throw BreakException;
+        }
+      });
+    });
+  } catch (e) {
+    if (e !== BreakException) throw e;
+  }
+
+  var end = new Date();
+
+  console.log('all', indexPermutations.length * rotationPossibilities.length, 'solutions tried in', (end - start), 'milliseconds');
+};
+
+var debugSolution = function(permutation, rotationPossibility) {
+  var solution = buildSolution(permutation, rotationPossibility);
+  solution.renderToBody(true);
+};
+
+
+tryAllSolutions();
+
+// debugSolution([0, 1, 7, 5, 2, 4, 3, 6], [true, false, false, true, false, false, false, false]);
+
+

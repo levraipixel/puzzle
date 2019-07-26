@@ -1,6 +1,6 @@
 class Piece {
   constructor(a_blocks, b_blocks) {
-    console.log('[Piece] constructor', a_blocks, b_blocks);
+    // console.log('[Piece] constructor', a_blocks, b_blocks);
     this.a_blocks = a_blocks;
     this.b_blocks = b_blocks;
   }
@@ -21,7 +21,6 @@ class Piece {
       var j = isRotated ? (this.a_blocks.length - 1 - i) : i;
       var l_block = isRotated ? this.b_blocks : this.a_blocks;
       var r_block = isRotated ? this.a_blocks : this.b_blocks;
-
 
       var $row = $('<div>');
       $row.addClass('row');

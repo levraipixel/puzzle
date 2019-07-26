@@ -1,6 +1,6 @@
 class Solution {
   constructor(piecePlacements) {
-    console.log('[Solution] constructor', piecePlacements);
+    // console.log('[Solution] constructor', piecePlacements);
     this.piecePlacements = piecePlacements;
   }
 
@@ -12,7 +12,7 @@ class Solution {
       rows[i] = new Array(n);
     }
 
-    this.piecePlacements.forEach(function (piecePlacement) {
+    this.piecePlacements.forEach(function (piecePlacement, iii) {
       var piece = piecePlacement.piece;
       var index = piecePlacement.index;
       var isRotated = piecePlacement.isRotated;
@@ -27,14 +27,14 @@ class Solution {
       if (isAbove) {
         for(var i = 0; i < l_block.length; i++) {
           var j = isRotated ? (l_block.length - 1 - i) : i;
-          rows[index1][j] = (rows[index1][j] || 0) + l_block[j];
-          rows[index2][j] = (rows[index2][j] || 0) + r_block[j];
+          rows[index1][j] = (rows[index1][j] || 0) + l_block[i];
+          rows[index2][j] = (rows[index2][j] || 0) + r_block[i];
         }
       } else {
         for(var i = 0; i < l_block.length; i++) {
           var j = isRotated ? (l_block.length - 1 - i) : i;
-          rows[j][index1] = (rows[j][index1] || 0) + l_block[j];
-          rows[j][index2] = (rows[j][index2] || 0) + r_block[j];
+          rows[j][index1] = (rows[j][index1] || 0) + l_block[i];
+          rows[j][index2] = (rows[j][index2] || 0) + r_block[i];
         }
       }
     });
@@ -43,11 +43,31 @@ class Solution {
   }
 
   isValid() {
+    var blocksMatrix = this.blocksMatrix();
+
+    if (blocksMatrix[2][2] > 0) {
+      // console.log('invalid on center');
+      return false;
+    }
+
+    for(var i = 0; i < blocksMatrix.length; i++) {
+      for(var j = 0; j < blocksMatrix[i].length; j++) {
+        if (blocksMatrix[i][j] > 1) {
+          // console.log('invalid at', i, j, '->', blocksMatrix[i][j]);
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
-  render() {
+  render(isDebug) {
     var $solution = $('<div>');
     $solution.addClass('solution');
+    if (isDebug) {
+      $solution.addClass('debug');
+    }
 
     var $pieces = [
       [null, null, null, null],
@@ -74,8 +94,8 @@ class Solution {
     return $solution;
   }
 
-  renderToBody() {
-    $('body').append(this.render());
+  renderToBody(isDebug) {
+    $('body').append(this.render(isDebug));
 
     var $blocksMatrix = $('<tbody>');
     this.blocksMatrix().forEach(function (row) {
@@ -89,9 +109,14 @@ class Solution {
 
       $blocksMatrix.append($row);
     });
-
     $('body').append(
       $('<table>').append($blocksMatrix)
+    );
+
+    $('body').append(
+      $('<div>').append(
+        this.isValid() ? 'VALID' : 'INVALID'
+      )
     );
   }
 }
